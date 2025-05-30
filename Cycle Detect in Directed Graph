@@ -1,0 +1,123 @@
+#DSA -> DIRECTED GRAPH CYCLE DETECTION 
+
+##Approach 1 : Kahn's algorithm (Topological Sorting):
+1) Calculate inDeg for the Directed Graph 
+2) And process nodes with inDeg =  0  {It allows to process all the components of graph even if disconnected graph given , to detect cycle in any one of those components}
+3) BFS Q {lower down the inDeg of nbr nodes} -> Ensures every nbr node if visited once as inDeg keeps on decreasing , eleminating the need of vis {boolean array}
+4) If nbr nodes inDeg == 0  : Push in q  to process and increase vis counts to track{no. of nodes visited} 
+
+Why does it works ? 
+- The topological sorting approach used in Kahn’s algorithm removes nodes only when their in-degree becomes zero.
+- Nodes that are part of a cycle will always have an in-degree ≥ 1 (because cycles are formed when there’s at least one incoming edge keeping them “locked”).
+Eg : 1->2-> 3
+        |^  |   in this InDeg of 2,3,4,5 -> will always be >= 1 {hence the nodes in Cycle are locked & can't be visited at all !}
+        5 <- 4
+- Since Kahn’s algorithm only processes nodes with in-degree = 0, cycle nodes never get pushed into the queue.
+- That’s why, at the end of the traversal, some nodes remain unvisited, meaning a cycle exists.
+
+HENCE visitCount < TOTAL NODES OF TREE => {Cyclic Graph}
+
+Code - Implementation :
+```
+#include <bits/stdc++.h>
+using namespace std ;
+vector<vector<int>> adj ;
+void initAdj(int n , vector<pair<int,int>>& edges ) {
+    adj.resize(n+1) ;
+    for (auto p : edges) {
+        int u = p.first , v = p.second ;
+        adj[u].push_back(v) ;
+    }
+}
+bool detectKahnBFS(int n , vector<pair<int,int>>& edges) {
+    vector<int> inDeg(n+1 , 0) ;
+    for (auto p : edges) {
+        inDeg[p.second]++ ;
+    }
+    queue<int> q ;
+    int vis = 0;
+    for (int i = 1 ; i<= n ; i++) {
+        if (inDeg[i] == 0) {
+            vis++ ;
+            q.push(i);
+        }
+    }
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        for (int v : adj[u]) {
+            inDeg[v]-- ;
+            if (inDeg[v] == 0) {
+                vis++ ;
+                q.push(v) ;
+            }
+        }
+    }
+    
+    return vis < n ;
+}
+int main() {
+    vector<pair<int,int>> edges = {{1,2},{2,3},{3,4},{4,5},{5,2} ,{6,7},{7,8}};
+    int n = 8 ;
+    initAdj(n ,edges);
+    cout << detectKahnBFS(n, edges) << endl ;
+    
+    return 0;
+}
+```
+
+
+##Approach 2 : DFS (Stack and vis Based Approach) 
+Here Stack is actually an array to track whether any already vis node {within the same call if already visited} -> cycle exists
+
+1) Maintain a stack of elements {separate for every call } -> if detect starts at u->nbr1->nbr2->nbr3->nbr4->nbr1
+
+- Stack is important : because vis array tracks whether the node has already been vis : But no surity whether its in same cycle
+- With in same cycle {what are the nodes which have been track is tracked by our stack} -> Stk
+- Vis array is universal in order to track -> To visit univisited nodes {Preventing infinte loops} , {Procoss all disconnected components} 
+
+Do keep in mind : If any nbr having stk[nbr] = true detected -> ie a node within the same stack is reached again ie Cycle !
+
+One whole call for the same stack ends -> Do retrack stk[false] so that to process the node in can the node is created a cycle with another set of nodes 
+
+Code Implementation :
+
+``` 
+#include <bits/stdc++.h>
+using namespace std ;
+vector<vector<int>> adj ;
+void initAdj(int n , vector<pair<int,int>>& edges ) {
+    adj.resize(n+1) ;
+    for (auto p : edges) {
+        int u = p.first , v = p.second ;
+        adj[u].push_back(v) ;
+    }
+}
+bool cycleUtil(int i , vector<bool>& stk , vector<bool>& vis) {
+    stk[i] = true ; vis[i] = true ;
+    for (int v : adj[i]) {
+        if (stk[v]) return true ;
+        if (!vis[v] && cycleUtil(v , stk , vis)) return true ;
+    }
+    stk[i] = false ;
+    return false ;
+}
+bool detectDFS(int n) {
+    vector<bool>  vis(n+1 , false );
+    vector<bool>  stk(n+1 , false ); 
+    for(int i = 1 ; i<= n ; i++) {
+        if (!vis[i] && cycleUtil(i , stk , vis)) return true ;
+    }
+    return false ;
+}
+
+int main() {
+    vector<pair<int,int>> edges = {{1,2},{2,3},{3,4},{4,5},{5,2} ,{6,7},{7,8}};
+    int n = 8 ;
+    initAdj(n ,edges);
+    cout << detectDFS(n) << endl ;
+    
+    return 0;
+}
+```
