@@ -1,0 +1,148 @@
+#  SUBSET SUM : From an array of numbers check whether is it possible to make targetSum or not .
+
+This is often asked in different forms  Eg : Check whether is it possible to divide the bundle of nums in 2 equal halves ... {For Even totalSum : Target = totalSum/2} and Odd total-> Never possible .
+DYNAMIC PROGRAMMING : TO CHECK SKIP-TAKE PROBLEM
+#3 Approaches 
+
+1) Memoization  :
+Here Valid CurrSum is considered -> until it becomes = targetSum , consider all valid num such that ( currSum + num <= targetSum )  & memoize results for each index and currSum {optimisation over recursion}
+Condition :
+  Take : Valid nums : currSum + num <= targetSum 
+  Skip : Valid nums : currSum -> not affected 
+
+```
+bool check(int i, vector<int>& v, int currSum, int targetSum, vector<vector<int>>& dp) {
+      if (currSum == targetSum) return true;
+      if (i >= v.size()) return false;
+      if (dp[i][currSum] != -1) {
+          return dp[i][currSum];
+      }
+      if (currSum + v[i] <= targetSum) {
+          if (check(i+1, v, currSum + v[i], targetSum, dp)) 
+              return dp[i][currSum] = true;
+      }
+      return dp[i][currSum] = check(i+1, v, currSum, targetSum, dp);
+  }
+  
+  bool makeSumMemo(vector<int>& v, int targetSum) {
+      int n = v.size();
+      vector<vector<int>> dp(n, vector<int>(targetSum+1, -1));
+      return check(0, v, 0, targetSum, dp);
+  }
+```
+
+2) Tabulation  :
+Similar to memo : Take and Skip conditional checks 
+  i -> Accounts for ith index num 
+  j -> TargetSum (BottomUp approach to form targetSum )
+
+bool makeSumTab2D(vector<int>& v, int targetSum) {
+    int n = v.size();
+    vector<vector<bool>> dp(n+1, vector<bool>(targetSum + 1, false));
+    dp[0][0] = true;
+    for (int i = 0; i <= n; i++) {
+        dp[i][0] = true;
+    }
+    bool res = false;
+    for (int i = 1; i <= n; i++) {
+        int val = v[i-1];
+        for (int j = 1; j <= targetSum; j++) {
+            if (val <= j) {
+                dp[i][j] = (dp[i-1][j-val] || dp[i-1][j]);
+            } else {
+                dp[i][j] = dp[i-1][j];
+            }
+        }
+        res = (res || dp[i][targetSum]);
+    }
+    return res;
+}
+
+# 3) MOST OPTIMISED : 1D DP -> Keep track of whether currSum possible or not ?? 
+## BUT HERE MOST PEOPLE GET CONFUSED !! 
+
+Here the 1D DP 
+For every num : we trying making the j sum {j -> pointer to form targetSum} 
+
+NECESSARY  ;  j = targetSum ; j >= num ;j -- 
+Q) Why  right to left traversal is important -> To avoid using the same changes or same number multiple time with in the traversal with same num 
+This is a 0/1 KNAPSACK PROBLEM : ie (an element can atmost be considered once) , unlike unBounded Knapsack !
+
+UNDERSTAND WITH EXAMPLE  :
+
+Let v = [2, 3, 5] and targetSum = 7.
+dp = [T, F, F, F, F, F, F, F] (initial state).
+
+For num = 2:
+j = 2 → 7: {Left to Right : Incorrect}
+
+dp[2] = dp[2] || dp[0] → dp[2] = T.
+
+dp[4] = dp[4] || dp[2] → dp[4] = T (but this is wrong because we used 2 twice).
+
+dp[6] = dp[6] || dp[4] → dp[6] = T (using 2 three times!).
+
+This incorrectly allows 2 + 2 + 2 = 6, which is invalid for subset sum.
+
+Correct Approach (Right to Left) :-
+dp = [T, F, F, F, F, F, F, F].
+For num = 2:
+
+  j = 7 → 2:
+  
+  dp[7] = dp[7] || dp[5] → F || F = F.
+  
+  dp[6] = dp[6] || dp[4] → F || F = F.
+  
+  ...
+  
+  dp[2] = dp[2] || dp[0] → F || T = T.
+
+Now, dp = [T, F, T, F, F, F, F, F] (only 2 is marked).
+
+For num = 3:
+
+j = 7 → 3:
+
+  dp[7] = dp[7] || dp[4] → F || F = F.
+  
+  dp[6] = dp[6] || dp[3] → F || F = F.
+  
+  dp[5] = dp[5] || dp[2] → F || T = T (using 2 + 3 = 5).
+  
+  dp[4] = dp[4] || dp[1] → F || F = F.
+  
+  dp[3] = dp[3] || dp[0] → F || T = T (using 3 alone).
+
+Now, dp = [T, F, T, T, F, T, F, F].
+
+For num = 5:
+
+j = 7 → 5:
+
+  dp[7] = dp[7] || dp[2] → F || T = T (using 2 + 5 = 7).
+  
+  dp[6] = dp[6] || dp[1] → F || F = F.
+  
+  dp[5] = dp[5] || dp[0] → T || T = T (using 5 alone).
+
+Final dp = [T, F, T, T, F, T, F, T].
+
+Result: dp[7] = true (valid subsets: 2 + 5 or 2 + 3 + 2 is avoided).
+
+
+Hence ALWAYS TRAVERSE FROM J=targetSum to j >= num {to update for valid num to be considered to make the targetSum {j} , avoiding any redundancy }
+
+## CODE IMPLEMENTATION :- 
+```cpp
+  bool makeSum(vector<int>& v, int targetSum) {
+      vector<bool> dp(targetSum + 1, false);
+      dp[0] = true; // Base case: empty subset sums to 0
+      for (int num : v) {
+          for (int j = targetSum; j >= num; j--) {
+              dp[j] = dp[j] || dp[j - num];
+          }
+      }
+      return dp[targetSum];
+  }
+```
