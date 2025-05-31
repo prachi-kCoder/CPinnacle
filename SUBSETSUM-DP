@@ -10,7 +10,7 @@ Condition :
   Take : Valid nums : currSum + num <= targetSum 
   Skip : Valid nums : currSum -> not affected 
 
-```
+```cpp
 bool check(int i, vector<int>& v, int currSum, int targetSum, vector<vector<int>>& dp) {
       if (currSum == targetSum) return true;
       if (i >= v.size()) return false;
@@ -36,6 +36,7 @@ Similar to memo : Take and Skip conditional checks
   i -> Accounts for ith index num 
   j -> TargetSum (BottomUp approach to form targetSum )
 
+```cpp
 bool makeSumTab2D(vector<int>& v, int targetSum) {
     int n = v.size();
     vector<vector<bool>> dp(n+1, vector<bool>(targetSum + 1, false));
@@ -57,7 +58,7 @@ bool makeSumTab2D(vector<int>& v, int targetSum) {
     }
     return res;
 }
-
+```
 # 3) MOST OPTIMISED : 1D DP -> Keep track of whether currSum possible or not ?? 
 ## BUT HERE MOST PEOPLE GET CONFUSED !! 
 
