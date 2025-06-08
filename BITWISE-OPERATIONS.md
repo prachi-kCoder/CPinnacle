@@ -79,4 +79,41 @@ int main() {
 }
 ```
 
-  
+## CONCEPT OF PREFIX XOR :-
+Since XOR exhibits properties similar to addition in certain cases (specifically associativity and invertibility over cumulative computations), prefix XOR can be leveraged to retrieve XOR over any subarray in constant time. 
+
+Precompute prefixXor[i] as the XOR of all elements from A[1] to A[i]  :
+### prefixXor[𝑖]=𝐴[1]⊕𝐴[2]⊕...⊕𝐴[𝑖]  
+For any subarray [L, R], the XOR can be computed in O(1) as:
+        XOR[𝐿,𝑅] = prefixXor[𝑅]⊕prefixXor[𝐿−1]  
+WHY ?? 
+prefixXOR[R] -> xor of range [1,R]   ; prefixXOR[l-1] -> xor of range [1,L-1]
+Further if prefixXor[R]^prefixXor[L-1] is done then [0,L-1] range is undergoing xor twice is Nullifies each other hence we get the xor of range [L,R] 
+Eg [1,3,1,5,6,7]  for range[2,5] 
+        prefixXor[5] = (1⊕3⊕1⊕5⊕6⊕7)
+        prefixXor[2] = (1⊕3⊕1)
+        prefixXor[2]⊕prefixXor[5] = (1⊕3⊕1⊕5⊕6⊕7) ⊕ (1⊕3⊕1) => (5⊕6⊕7)  
+- 1,3,1 nullified !  
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std ;
+int main() {
+    // RangeQuery Over xor 
+    vector<int> v = {3,1,7,8,9,2,5,7,0};
+    int n = v.size();
+    vector<vector<int>> q = {{2,4},{6,9},{1,5},{0,6}};
+    vector<int> prefixXor(n , 0) ;
+    
+    prefixXor[0] = v[0] ;
+    for (int  i = 1 ; i< n ; i++) {
+        prefixXor[i] = (prefixXor[i-1]^v[i]) ;
+    }
+    for (int j= 0; j < q.size() ;j++) {
+        int l = q[j][0] ; int r = q[j][1] ;
+        cout << "For [" <<l<<","<<r<<"] :" << (l == 0 ? prefixXor[r] : prefixXor[r] ^ prefixXor[l-1]) << endl ;
+    }
+    return 0;
+}
+```
