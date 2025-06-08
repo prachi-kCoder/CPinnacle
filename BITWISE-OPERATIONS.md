@@ -1,7 +1,8 @@
 # BITWISE OPERATIONS :
-KEEP IN MIND :
-Left Shift	<<	Shifts bits left (multiplies by 2^n )
-Right Shift	<<	Shifts bits right (divides by 2^n )
+KEEP IN MIND : 
+
+- Left Shift {<<}	Shifts bits left (multiplies by 2^n)
+- Right Shift {<<}	Shifts bits right (divides by 2^n )
 
 ## Important Bitwise Identities
 a) Relationship Between XOR, OR, and AND :-
