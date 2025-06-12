@@ -40,11 +40,12 @@ Keep in mind that is why we use (num&(num-1) == 0) to check the powers of 2 .
 🔹 3. Built-in Popcount (GCC/Clang)  
 TIME COMPLEXICITY : O(1) — hardware-accelerated
 
-32 - BIT :-
-Use : __builtin_popcount(num) 
-FOR LONG LONG  :-
+### 32 - BIT :-
+Use : __builtin_popcount(num) .
+### FOR LONG LONG  :-
 Use : __builtin_popcountll(num) 
 
 ```cpp
+cout << __builtin_popcount(num) << endl;
 cout << __builtin_popcountll(num) << endl;
 ```
