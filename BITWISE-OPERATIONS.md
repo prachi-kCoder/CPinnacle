@@ -6,15 +6,19 @@ KEEP IN MIND :
 
 ## Important Bitwise Identities
 a) Relationship Between XOR, OR, and AND :-
-### (A⊕B)+(A∣B)+(A&B) = 2×(A∣B)
-Proof : A⊕B = A+B−2×(A&B)    {As only pair of opposite bits are to be taken 1-0 or 0-1}
-        A∣B = A+B−(A&B)   {Eliminating the common part once as it may have been considered twice while adding A - B} 
-        (A⊕B)+(A∣B)=(A+B−2(A&B))+(A+B−(A&B)) =  2A+2B−3(A&B)
-        Add (A&B) :
-            2A+2B−2(A&B) = 2(A+B−(A&B)) = 2(A∣B) = RHS 
+        ### (A⊕B)+(A∣B)+(A&B) = 2×(A∣B)
+        
+        Proof : A⊕B = A+B−2×(A&B)    
+                        - { Try with example A=13 {1101} , B=10 {1010} 
+                        - LHS : 7 , RHS  = 13 + 10 - 2*(8) = 7
+                        - XOR gives a 1 for each differing bit.
+                        - When two bits are same (1 & 1), both A and B "double count" that bit in A + B, but XOR discards them.
+                        - So we subtract 2×(A & B) to nullify the common 1s.
 
 b) XOR and Addition :-
-### A+B = (A⊕B) + 2×(A&B)
+        ### A+B = (A⊕B) + 2×(A&B) 
+       -  OR includes all 1s — even shared ones.
+       -  But A + B counts shared bits twice, so we subtract (A & B) once to correct.
 
 c) Identity:   A⊕0=A   #XOR WITH 0 have no impact 
 
