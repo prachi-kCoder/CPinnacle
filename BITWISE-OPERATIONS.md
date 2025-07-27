@@ -16,16 +16,22 @@ a) Relationship Between XOR, OR, and AND :-
                         - So we subtract 2×(A & B) to nullify the common 1s.
 
 b) XOR and Addition :-
-        ### A+B = (A⊕B) + 2×(A&B) 
+ ### A+B = (A⊕B) + 2×(A&B) 
        -  OR includes all 1s — even shared ones.
        -  But A + B counts shared bits twice, so we subtract (A & B) once to correct.
 
-c) Identity:   A⊕0=A   #XOR WITH 0 have no impact 
+c) Identity: -
 
-d) Self-Inverse: A⊕A=0  # All bits equal in both A , A 
+        A⊕0=A   #XOR WITH 0 have no impact 
 
-e) Swap Trick:   (Swaps A and B without a temporary variable)
-### A⊕=B  ; B⊕=A ;   A⊕=B 
+d) Self-Inverse:
+
+        A⊕A=0  # All bits equal in both A , A 
+
+e) Swap Trick:  
+
+        (Swaps A and B without a temporary variable)
+        ### A⊕=B  ; B⊕=A ;   A⊕=B 
 
 f)  OR and AND Properties :
   ### OR is monotonic: A∣B ≥ max(A,B)
